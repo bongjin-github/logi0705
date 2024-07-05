@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { productionStore } from "@/store/logi/production";
 import axios from "axios";
 import { VDataTable } from "vuetify/labs/VDataTable";
 const isDialogVisible = ref(false);
@@ -12,11 +13,14 @@ const mrpList = inject("mrpList");
 const { selectedTab } = defineProps(["selectedTab"]);
 const emit = defineEmits(["get-mrp-gather-list"]);
 
+//api모듈화 하다가 실패했댜... 6/28
 const getMrpGatherResultList = async () => {
+  console.log('dddddddddddddddddddddd', mpsNoList._rawValue)
   const url =
     "http://localhost:8282/logi/logistics/production/mrpGathering/getMrpGatheringList";
   const params = { mpsNoList: `${mpsNoList._rawValue}` };
-
+  // await productionStore().GET_MRP_GATHERING_URL(params)
+  // const response = productionStore().getMrpGatheringListData
   const response = await axios.get(url, {
     params: params,
   });
@@ -24,6 +28,7 @@ const getMrpGatherResultList = async () => {
   console.log("response from MrpGatherResultModal", response.data.gridRowJson);
   item.value = response.data.gridRowJson;
 };
+
 
 const setData = () => {
   console.log("mrpList is : ", mrpList._rawValue);

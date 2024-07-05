@@ -31,29 +31,26 @@ const closeModal = () => {
 const fetchData = async (customerCodes: string) => {
   console.log('1111111', customerCodes)
 
-  const res = await axios.get('http://localhost:8282/logi/base/searchClientDetailList', {
-    params: {
-      customerCodes,
-    },
-  })
+await baseStore().SEARCH_CLIENT_DETAIL_URL(customerCodes)
+const res = baseStore().clientDetailList
 
-  console.log('rara', res.data.clientDetailInfo[0])
+  console.log('rara', res)
 
-  customerCode.value = res.data.clientDetailInfo[0].customerCode
-  workplaceCode.value = res.data.clientDetailInfo[0].workplaceCode
-  customerName.value = res.data.clientDetailInfo[0].customerName
-  customerType.value = res.data.clientDetailInfo[0].customerType
-  customerCeo.value = res.data.clientDetailInfo[0].customerCeo
-  businessLicenseNumber.value = res.data.clientDetailInfo[0].businessLicenseNumber
-  socialSecurityNumber.value = res.data.clientDetailInfo[0].socialSecurityNumber
-  customerBusinessConditions.value = res.data.clientDetailInfo[0].customerBusinessConditions
-  customerBusinessItems.value = res.data.clientDetailInfo[0].customerBusinessItems
-  customerZipCode.value = res.data.clientDetailInfo[0].customerZipCode
-  customerBasicAddress.value = res.data.clientDetailInfo[0].customerBasicAddress
-  customerDetailAddress.value = res.data.clientDetailInfo[0].customerDetailAddress
-  customerTelNumber.value = res.data.clientDetailInfo[0].customerTelNumber
-  customerFaxNumber.value = res.data.clientDetailInfo[0].customerFaxNumber
-  customerNote.value = res.data.clientDetailInfo[0].customerNote
+  customerCode.value = res.customerCode
+  workplaceCode.value = res.workplaceCode
+  customerName.value = res.customerName
+  customerType.value = res.customerType
+  customerCeo.value = res.customerCeo
+  businessLicenseNumber.value = res.businessLicenseNumber
+  socialSecurityNumber.value = res.socialSecurityNumber
+  customerBusinessConditions.value = res.customerBusinessConditions
+  customerBusinessItems.value = res.customerBusinessItems
+  customerZipCode.value = res.customerZipCode
+  customerBasicAddress.value = res.customerBasicAddress
+  customerDetailAddress.value = res.customerDetailAddress
+  customerTelNumber.value = res.customerTelNumber
+  customerFaxNumber.value = res.customerFaxNumber
+  customerNote.value = res.data.customerNote
 }
 
 watch(() => props.selectedCustomerCode, async () => {

@@ -3,6 +3,7 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 import { ref, watch } from "vue";
 import { defineProps, defineEmits } from 'vue';
 import axios from 'axios';
+import { sysStore } from "@/store/sys";
 
 const infodata=ref([]);
 const isDialogVisible = ref(false);
@@ -23,9 +24,11 @@ const searchItem = async() => {
   console.log("bomModal1.itemClassificationCondition:", itemClassificationCondition);
     
   try {
-    const response = await axios.get('http://localhost:8282/sys/findPayStepCodeDetailList',{
-      params: { itemClassificationCondition }
-    });
+    // const response = await axios.get('http://localhost:8282/sys/findPayStepCodeDetailList',{
+    //   params: { itemClassificationCondition }
+    // });
+    await sysStore().FIND_PAY_STEP_CODE_DETAIL_LIST(itemClassificationCondition)
+    const response = sysStore().getFindPayStepCodeDetailList
     
     isDialogVisible.value = true;
     console.log("searchItem", response.data);

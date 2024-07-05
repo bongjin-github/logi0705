@@ -19,6 +19,14 @@ const UPDATE_FINANCE_CLIENT_INFO = '/base/updateFinance'
 const DELETE_FINANCE_CLIENT_INFO = '/base/deleteFinance'
 //창고조회 78th추가
 const GET_WAREHOUSE_LIST = '/base/warehouseInfo'
+//금융거래처 상세조회 78th추가
+const GET_FINANCE_DETAIL_INFO = '/base/searchFinanceDetailList'
+// 일반거래처 상세조회 6/27
+const SEARCH_CLIENT_DETAIL_URL = '/base/searchClientDetailList'
+//창고추가 78th추가 6/27
+const ADD_WAREHOUSE_LIST = '/base/warehousebatchListProcess'
+//창고삭제 78th추가 6/27
+const DELETE_WAREHOUSE_LIST = '/base/warehousebatchListProcess'
 
 // 회사정보 조회
 function getCompanyInfo() {
@@ -127,6 +135,34 @@ function getWarehouseList() {
   return logiApi.get(`${GET_WAREHOUSE_LIST}`)
 }
 
+// 금융거래처 상세조회
+function getFinanceDetail(code:string) {
+  return logiApi.get(`${GET_FINANCE_DETAIL_INFO}`, {
+    params: {
+      code,
+    },
+  })
+}
+
+// 일반거래처 상세조회 6/27
+function searchClientDetailList(customerCodes: string) {
+  return logiApi.get(`${SEARCH_CLIENT_DETAIL_URL}`, {
+    params: {
+      customerCodes,
+    },
+  })
+}
+
+// 창고추가 78th추가 6/27
+function addWarehouseList(batchList: any) {
+  return logiApi.post(`${ADD_WAREHOUSE_LIST}`,batchList)
+}
+
+// 창고삭제 78th추가 6/27
+function deleteWarehouseList(deleteList: any) {
+  return logiApi.post(`${DELETE_WAREHOUSE_LIST}`,deleteList)
+}
+
 export {
   getCompanyInfo,
   getWorkplaceList,
@@ -144,5 +180,9 @@ export {
   updateFinanceClient,
   deleteFinanceClient,
   getCodeList,
-  getWarehouseList
+  getWarehouseList,
+  getFinanceDetail,
+  searchClientDetailList,
+  addWarehouseList,
+  deleteWarehouseList,
 }

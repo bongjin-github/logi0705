@@ -28,29 +28,25 @@ const closeUpdateModal = () => {
 const fetchData = async (code: string) => {
   console.log('1111111', code)
 
-  const res = await axios.get('http://localhost:8282/logi/base/searchFinanceDetailList', {
-    params: {
-      code,
-    },
-  })
+  await baseStore().GET_FINANCE_DETAIL_INFO(code)
+  const res = baseStore().FinanceDetailInfo
 
-  console.log('제발', res)
-  console.log('rara', res.data.financeDetailInfo[0])
+  console.log('FinanceDetailInfo', res)
 
-  accountAssociatesCode.value = res.data.financeDetailInfo[0].accountAssociatesCode
-  workplaceCode.value = res.data.financeDetailInfo[0].workplaceCode
-  accountAssociatesName.value = res.data.financeDetailInfo[0].accountAssociatesName
-  accountAssociatesType.value = res.data.financeDetailInfo[0].accountAssociatesType
-  accountNumber.value = res.data.financeDetailInfo[0].accountNumber
-  accountOpenPlace.value = res.data.financeDetailInfo[0].accountOpenPlace
-  cardNumber.value = res.data.financeDetailInfo[0].cardNumber
-  cardType.value = res.data.financeDetailInfo[0].cardType
-  cardMemberName.value = res.data.financeDetailInfo[0].cardMemberName
-  cardOpenPlace.value = res.data.financeDetailInfo[0].cardOpenPlace
-  businessLicenseNumber.value = res.data.financeDetailInfo[0].businessLicenseNumber
-  financialInstituteCode.value = res.data.financeDetailInfo[0].financialInstituteCode
-  financialInstituteName.value = res.data.financeDetailInfo[0].financialInstituteName
-  divisionCodeNo.value = res.data.financeDetailInfo[0].divisionCodeNo
+  accountAssociatesCode.value = res.accountAssociatesCode
+  workplaceCode.value = res.workplaceCode
+  accountAssociatesName.value = res.accountAssociatesName
+  accountAssociatesType.value = res.accountAssociatesType
+  accountNumber.value = res.accountNumber
+  accountOpenPlace.value = res.accountOpenPlace
+  cardNumber.value = res.cardNumber
+  cardType.value = res.cardType
+  cardMemberName.value = res.cardMemberName
+  cardOpenPlace.value = res.cardOpenPlace
+  businessLicenseNumber.value = res.businessLicenseNumber
+  financialInstituteCode.value = res.financialInstituteCode
+  financialInstituteName.value = res.financialInstituteName
+  divisionCodeNo.value = res.divisionCodeNo
 }
 
 watch(() => props.selecteditem, async () => {

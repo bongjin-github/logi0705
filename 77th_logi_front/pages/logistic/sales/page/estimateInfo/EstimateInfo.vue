@@ -5,10 +5,16 @@
       <VCard class="mb-6" title="견적 조회">
         <VCardText>
           <VRow align="center">
-            <VCol cols="3">
-              <v-btn class="ml-3" @click="searchDate">견적 조회</v-btn>
+            <VCol cols="5" >
+              <v-btn class="ma-3" @click="fetchData">견적 조회</v-btn>
+              <EstimateModifyModal class="ma-3"
+            :selectEstimate="selectEstimate"
+            :responseEstimateList="responseEstimateList"
+            />
+            <v-btn class="ma-3" @click="deleteData">견적 삭제</v-btn>
             </VCol>
-            <VCol cols="3" style="align-self: flex-end">
+            
+            <VCol cols="2" style="align-self: flex-end">
               <v-select
                 v-model="selectedItem"
                 class="mb-3"
@@ -19,7 +25,7 @@
                 @input="updateSelectedItem"
               ></v-select>
             </VCol>
-            <VCol cols="3">
+            <VCol cols="2">
               <AppDateTimePicker
                 class="mb-3"
                 v-model="startDate"
@@ -27,7 +33,7 @@
                 placeholder="YYYY-MM-DD"
               />
             </VCol>
-            <VCol cols="3">
+            <VCol cols="2">
               <AppDateTimePicker
                 class="mb-3"
                 v-model="endDate"
@@ -40,10 +46,12 @@
         <VCardText>
           <VDataTable
             :headers="headers"
-            :items="infodata"
+            @click:row="selectRow"
+            :items="responseEstimateList"
             :items-per-page="5"
-            fixed-header
-            @click:row="detailRow"
+            show-select
+            select-strategy="single"
+            return-object
           />
         </VCardText>
       </VCard>
@@ -57,9 +65,8 @@
         <VCardText>
           <VDataTable
             :headers="detailheaders"
-            :items="infodata1"
+            :items="responseEstimateDetailList"
             :items-per-page="5"
-            fixed-header
           />
         </VCardText>
       </VCard>
@@ -72,24 +79,52 @@ import { salesStore } from "@/store/logi/sales";
 import axios from "axios";
 import { ref, onMounted, computed } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
+import EstimateModifyModal from './EstimateModifyModal.vue'
 
-const infodata = ref([]);
-const infodata1 = ref([]);
+const responseEstimateDetailList = ref([]);
+const responseEstimateList = ref([])
 
 const selectedItem = ref(null);
-const startDate = ref("");
-const endDate = ref("");
+const startDate = ref('');
+const endDate = ref('');
 const dateSearchCondition = ref([]);
 
-onMounted(async () => {
-  infodata.value = await fetchData();
+//선택된 행
+const selectEstimate = ref([]);
+
+//행을 선택하면 견적상세 확인가능 및 자식창으로 값을 넘겨줌
+const selectRow= async(item:any, row:any)=>{
+  try{
+  selectEstimate.value = toRaw(row.item);
+  const estimateNo = selectEstimate.value.estimateNo
+  console.log('선택된 행' , selectEstimate.value)
+  console.log('선택된 행의 견적번호' , selectEstimate.value.estimateNo)
   
-});
+  //견적 상세 조회
+    await salesStore().SEARCH_ESTIMATE_DETAIL(estimateNo)
+    responseEstimateDetailList.value = salesStore().estimateDetailInfo
+
+
+
+
+  }catch(error){
+    console.error('Error fetching data:', error);
+    return [];
+  }
+}
+
+//선택된행 확인하기위함
+// watch(selectEstimate, () => {
+//   console.log('selectEstimate >>>>>>>>>>>>', selectEstimate);
+// })
+
 
 const updateSelectedItem = (value: any) => {
   selectedItem.value = value;
   console.log("select", selectedItem);
 };
+
+
 
 const headers = [
   { title: "견적일련번호", key: "estimateNo", align: "center" },
@@ -120,8 +155,8 @@ const items = [
   { value: "effectiveDate", text: "유효일자" },
 ];
 
-const searchDate = async () => {
-  // 시작일, 종료일, 드롭다운 모두 선택하지 않은 경우
+//78th 수정(모듈화)
+const fetchData = async () => {
   if (!startDate.value && !endDate.value && !selectedItem.value) {
     alert("시작일과 종료일을 선택하고, 선택도 해주세요!");
     return;
@@ -138,54 +173,53 @@ const searchDate = async () => {
     alert("선택을 해주세요!");
     return;
   }
-
+  
   try {
-    const response = await fetchData(
-      startDate.value,
-      endDate.value,
-      selectedItem.value
-    );
-    infodata.value = response;
-
-   
+    await salesStore().SEARCH_ESTIMATES_LIST_URL(startDate.value, endDate.value, selectedItem.value)
+    responseEstimateList.value = salesStore().SearchEstimatesList
+    console.log("estimate", responseEstimateList);
+    return responseEstimateList;
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 };
 
-const detailRow = async(item:any, row:any)=>{
-  console.log("row",row.internalItem.columns.estimateNo)
-  try{
-    const estimateNo=row.internalItem.columns.estimateNo
+// const handleModifyCom = async () => {
+//   await fetchData();
+// }
 
-    //견적 상세 조회
-    await salesStore().SEARCH_ESTIMATE_DETAIL(estimateNo)
-    infodata1.value = salesStore().estimateDetailInfo
+//삭제
+const deleteData = async () => {
+  try {
+    if (!selectEstimate.value) {
+      console.log('삭제할selectEstimate', selectEstimate.value)
+      console.warn('삭제할 항목을 선택하세요.')
+      alert("삭제할 데이터를 선택해주세요!");
 
-  }catch(error){
-    console.error('Error fetching data:', error);
-    return [];
+      return
+    }
+
+    const userConfirmed = window.confirm('삭제하시겠습니까?')
+
+    if (userConfirmed) {
+      const estimateNo = selectEstimate.value.estimateNo
+
+      console.log('삭제할estimateNo', estimateNo)
+
+      await salesStore().DELETE_ESTIMATE_URL(estimateNo)
+
+      fetchData()
+
+      alert('견적이 성공적으로 삭제되었습니다.')
+    }
+  }
+  catch (error) {
+    console.error('데이터 삭제 오류:', error)
+    alert('견적 삭제에 실패했습니다.')
   }
 }
 
-const fetchData = async () => {
-  try {
-    const response = await axios.get(
-      "http://localhost:8282/logi/sales/searchEstimates",
-      {
-        params: {
-          startDate: startDate.value,
-          endDate: endDate.value,
-          dateSearchCondition: selectedItem.value,
-        },
-      }
-    );
-    console.log("estimate", response.data.gridRowJson);
-    return response.data.gridRowJson;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
+//병합좀 되라!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!alkdfjslfdjlasfdjalkfdjaslfjalfjasfjladflskf시ㅓㅈ시저시ㅏㅈㅅ더ㅣㅏㅁㅈ덤ㅇㄹ
 
 
 </script>

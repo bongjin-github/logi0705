@@ -147,13 +147,8 @@ const orderListClick = async () => {
 </template>
 
 <style scoped>
-.button-container {
-  display: flex;
-  align-items: center;
-}
-
-.button {
-  margin-left:-410px;
-  margin-right:1500px;
+.button{
+    margin-left:-410px;
+    margin-right:1500px;
 }
 </style>

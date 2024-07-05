@@ -5,8 +5,8 @@ import { purchaseStore } from '@/store/logi/purchase'
 import OptionOrderModal from './modal/OptionOrderModal.vue'
 import GetOrderDialogModal from './modal/GetOrderDialogModal.vue'
 
-const startDate = ref("");
-const endDate = ref("");
+const startDate = ref(null);
+const endDate = ref(null);
 const infodata = ref([]);
 const selectData = ref([]);
 
@@ -39,95 +39,99 @@ const getOrderListClick = async () => {
   }
 };
 
-const initializeInfodata = () => {
-  startDate.value = '';
-  endDate.value = '';
-  infodata.value = [];
-}
-
 </script>
 
 <template>
   <VCard>
-    <VCardText>
-      <div class="button-container">
-
-        <!-- 모의재고처리 및 취합발주 버튼 -->
-        <GetOrderDialogModal 
-          :selectData="selectData"
-          @initializeInfodata = "initializeInfodata"
-        />
-
-        <!-- 임의발주 버튼 -->
-        <OptionOrderModal 
-          :selectData="selectData"
-        />
-
-        <div class="date-picker-container">
-          <VCol cols="6">
-            <AppDateTimePicker 
-              v-model="startDate" 
-              class="mb-5" 
-              label="시작일" 
-              placeholder="YYYY-MM-DD" 
+      <VCardText>
+        <div class="button-container">
+            <!-- 모의재고처리 및 취합발주 버튼  -->
+            <GetOrderDialogModal 
+             :selectData = "selectData"
             />
-          </VCol>
-        
-          <VCol cols="6">
-            <AppDateTimePicker 
-              v-model="endDate" 
-              class="mb-5"  
-              label="종료일" 
-              placeholder="YYYY-MM-DD"
-            />
-          </VCol>
-
-          <!-- 재고처리/발주필요 목록조회 -->
-          <VBtn 
-            class="button2"
-            color="primary" 
-            @click="getOrderListClick"
-          >
-            재고/발주목록 조회 
-          </VBtn>
-        </div>
-      </div>
       
-      <VDataTable
-        v-model="selectData"
-        :headers="getOrderListHeaders" 
-        :items="infodata" 
-        :items-per-page="10"
-        item-value="mrpGatheringNo"
-        return-object
-        show-select 
-      />
-    </VCardText>
+            <!-- 임의발주 버튼 -->
+            <OptionOrderModal 
+              :selectData = "selectData"
+              />
+
+            <div class="date-picker-container">
+              <VCol cols="3">
+                <div class="date-picker-wrapper1">
+                <AppDateTimePicker 
+                    v-model="startDate" 
+                    class="mb-5" 
+                    label="시작일" 
+                    placeholder="YYYY-MM-DD" 
+                  />
+                </div>
+              </VCol>
+            
+              <VCol cols="3">
+                <div class="date-picker-wrapper2">
+                    <AppDateTimePicker 
+                      v-model="endDate" 
+                      class="mb-5"  
+                      label="종료일" 
+                      placeholder="YYYY-MM-DD"
+                    />
+                </div>
+              </VCol>
+         
+        
+              <!-- 재고처리/발주필요 목록조회 -->
+              <VBtn 
+                  class="button2"
+                  color="primary" 
+                  @click="getOrderListClick"
+                  >재고/발주목록 조회 
+              </VBtn>
+          </div>
+        </div>
+    
+        
+          <VDataTable
+              v-model="selectData"
+              :headers="getOrderListHeaders" 
+              :items="infodata" 
+              :items-per-page="10"
+              item-value="mrpGatheringNo"
+              return-object
+              show-select 
+          />
+      </VCardText>
   </VCard>
 </template>
 
-<style scoped>
+<style>
 .button-container {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+}
+
+.button {
+  margin-right: 20px;
 }
 
 .date-picker-container {
   display: flex;
-  gap: 20px;
 }
 
-.button2 {
-  margin-top: 25px;
+.date-picker-wrapper1 {
+  width:150px; 
+  margin-right:300px; 
+  margin-left:440px;
 }
 
-.mb-5 {
-  margin-bottom: 30px;
+.date-picker-wrapper2 {
+  width:150px; 
+  margin-right:200px; 
+  margin-left:170px;
 }
 
-.mb-3 {
-  margin-bottom: 15px;
+.button2{
+  margin-right:200px; 
+  margin-left:-90px; 
+  margin-top:35px;
 }
 </style>

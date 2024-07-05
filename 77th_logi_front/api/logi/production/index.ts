@@ -22,6 +22,20 @@ const SALES_PLAN_TO_MPS_URL = "/production/convertSalesPlanToMps";
 const GET_PRODUCTION_PROCESS_LIST = "/production/ProductionProcessList";
 // //작업지시 모의전개 모달창에서 지점 조회
 const GET_WORKPLACE_LIST = "/production/WorkplaceList";
+//소요량전개 페이지에서 수주 조회/판매계획 6/28
+const SEARCH_MPS_INFO_URL = '/logistics/production/searchMpsInfo'
+//소요량취합 결과 조회 페이지에서 소요량 취합 결과 조회 6/28
+const SEARCH_MRP_GATHERING_URL = '/logistics/production/mrpGathering/searchMrpGathering'
+//소요량전개 페이지에서 품목별 조달계획 탭 안에서 조달구분 6/28
+const GET_MRP_LIST_URL = '/logistics/production/mrpGathering/getMrpList'
+//소요량전개 페이지에서 MPS수정 6/28
+const UPDATE_MPS_URL = '/logistics/production/updateMps'
+//소요량전개 페이지에서 MRP 모의전개 6/28
+const OPEN_MRP_URL = '/logistics/production/openMrp'
+//소요량전개 페이지에서 MRP모의전개 모달창에서 등록하는 페이지 6/28
+const REGISTER_MRP_URL = '/logistics/production/registerMrp'
+//소요량전개 페이지에서 품목별 조달계획 탭 안에서 조달구분에서 소요량 취합 실행 6/28
+const GET_MRP_GATHERING_URL = '/logistics/production/mrpGathering/getMrpGatheringList'
 
 
 //작업지시 필요항목 조회
@@ -120,18 +134,93 @@ function postSalesPlanToMps(to : SalesPlanTO) {
   return logiApi.post(`${SALES_PLAN_TO_MPS_URL}`, to);
 }
 
-// //작업지시 모의전개 모달창에서 작업장 조회
+//작업지시 모의전개 모달창에서 작업장 조회
 function getProductionProcessList() {
   console.log('logiApi.get(`${GET_PRODUCTION_PROCESS_LIST}`)   ', logiApi.get(`${GET_PRODUCTION_PROCESS_LIST}`));
   return logiApi.get(`${GET_PRODUCTION_PROCESS_LIST}`);
 }
 
-// //작업지시 모의전개 모달창에서 지점 조회
+//작업지시 모의전개 모달창에서 지점 조회
 function getWorkplaceList() {
   console.log('logiApi.get(`${GET_WORKPLACE_LIST}`)   ', logiApi.get(`${GET_WORKPLACE_LIST}`));
 
   return logiApi.get(`${GET_WORKPLACE_LIST}`);
 }
+
+//소요량전개 페이지에서 수주 조회(수주로 MPS 등록 건)
+function searchMpsInfo(startDate: string, endDate: string, classification: string) {
+  console.log('api에서 startDate', startDate)
+  console.log('api에서 endDate', endDate)
+  console.log('api에서 classification', classification)
+  return logiApi.get(`${SEARCH_MPS_INFO_URL}`, {
+    params: {
+      startDate,
+      endDate,
+      classification,
+    },
+  });
+}
+
+//소요량취합 결과 조회 페이지에서 소요량 취합 결과 조회 6/28
+function searchMrpGathering(startDate: string, endDate: string, selectedOption: string) {
+  console.log('api에서 startDate', startDate)
+  console.log('api에서 endDate', endDate)
+  console.log('api에서 selectedOption', selectedOption)
+  return logiApi.get(`${SEARCH_MRP_GATHERING_URL}`, {
+    params: {
+      startDate,
+      endDate,
+      searchDateCondition : selectedOption,
+    },
+  });
+}
+
+//소요량전개 페이지에서 품목별 조달계획 탭 안에서 조달구분 6/28
+function getMrpList(mrpGatheringStatusCondition: string) {
+  console.log('api에서 mrpGatheringStatusCondition', mrpGatheringStatusCondition)
+  return logiApi.get(`${GET_MRP_LIST_URL}`, {
+    params: {
+      mrpGatheringStatusCondition,
+    },
+  });
+}
+
+//소요량전개 페이지에서 MPS수정 6/28
+function updateMps(modifiedData : any) {
+  console.log('mpsData api, mpsData, ', modifiedData);
+
+  return logiApi.post(`${UPDATE_MPS_URL}`, modifiedData);
+}
+
+//소요량전개 페이지에서 MRP 모의전개 6/28
+function openMrp(mpsNo: string) {
+  console.log('api에서 mpsNo', mpsNo)
+  return logiApi.get(`${OPEN_MRP_URL}`, {
+    params: {
+      mpsNo,
+    },
+  });
+}
+
+//소요량전개 페이지에서 MRP모의전개 모달창에서 등록하는 페이지 6/28
+function registerMrp(body : any) {
+  console.log('mpsData api, body, ', body);
+
+  return logiApi.put(`${REGISTER_MRP_URL}`, body);
+}
+
+//소요량전개 페이지에서 품목별 조달계획 탭 안에서 조달구분에서 소요량 취합 실행 6/28
+//얘는 만들어놨는데 적용 못시켰다..
+function getMrpGatheringList(params: any) {
+  console.log('api에서 params 타입???', typeof params)
+  console.log('api에서 params', params)
+  return logiApi.get(`${GET_MRP_GATHERING_URL}`, {
+    params: {
+      params,
+    },
+  });
+}
+
 
 
 
@@ -149,5 +238,12 @@ export {
   postContractToMps,
   getProductionProcessList,
   getWorkplaceList,
-  postSalesPlanToMps
+  postSalesPlanToMps,
+  searchMpsInfo,
+  searchMrpGathering,
+  getMrpList,
+  updateMps,
+  openMrp,
+  registerMrp,
+  getMrpGatheringList,
 }

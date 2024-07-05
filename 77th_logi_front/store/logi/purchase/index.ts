@@ -14,7 +14,8 @@ import {
     getOrderListOnDlvry,
     putOrderListInspection,
     getOrderListWarehousing,
-    getSearchStockLogList,
+  getSearchStockLogList,
+    getWarehouseStockList,
 } from "@/api/logi/purchase/index";
 
 export const purchaseStore = defineStore("purchaseStore", {
@@ -32,7 +33,8 @@ export const purchaseStore = defineStore("purchaseStore", {
         OrderListOnDlvry: [] as any, //오늘날짜로 입고
         OrderListInspection: [] as any, //현재 체크된 발주품목 원재료 검사 
         OrderListWarehousing: [] as any, //현재 체크된 발주품목 입고 
-        SearchStockLogList: [] as any, //재고로그목록 조회 
+    SearchStockLogList: [] as any, //재고로그목록 조회 
+        WarehouseStockListInfo: [] as any, //창고상세조회
     }),
     actions: {
       
@@ -207,5 +209,19 @@ export const purchaseStore = defineStore("purchaseStore", {
           console.error(error);
         }
       },
+
+      //창고 상세 조회 78th 추가 6/27
+      async WAREHOUSE_STOCK_LIST_URL(warehouseCode: string) {
+        try {
+          const response = await getWarehouseStockList(warehouseCode);
+          this.WarehouseStockListInfo = response.data.gridRowJson
+          console.log("창고상세 조회:", response.data.gridRowJson);
+          
+        } catch (error: any) {
+          console.error(error);
+        }
+      },
+
+
     }
   })

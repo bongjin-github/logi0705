@@ -39,7 +39,7 @@ const getSalesPlanData = async () => {
    //선택된 데이터를 초기화 한다.
    selectedItem.value = undefined;
   try {
-    await salesStore().GET_SALES_PLAN_BY_DATE(startDate.value, endDate.value);
+    salesStore().GET_SALES_PLAN_BY_DATE(startDate.value, endDate.value);
     console.log("salesPlan??? ", salesStore().salesPlanByDateList);
     item.value = salesStore().salesPlanByDateList;
 

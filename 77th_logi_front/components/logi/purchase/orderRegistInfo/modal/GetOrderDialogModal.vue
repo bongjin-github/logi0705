@@ -131,33 +131,31 @@ const orderAndInvBtnClick = async () => {
        console.log("됬나 안됬나 !!");
        await purchaseStore().FETCH_ORDER_AND_INV(mrpNoList);
        
-       // Rest Template과 Webclient 부분을 주석처리 함.
-
-      //  const res = await axios.post("http://localhost:8282/logi/purchase/getInfoForSlip", mrpGatheringNoList);
-      //  const data = res.data;  // Assuming the response data is in `res.data`
-      //  const orderSlipTOList = res.data.orderSlipTOList;
-      //  const customerCode = selectedCustomer.value;
+       const res = await axios.post("http://localhost:8282/logi/purchase/getInfoForSlip", mrpGatheringNoList);
+       //const data = res.data;  // Assuming the response data is in `res.data`
+       const orderSlipTOList = res.data.orderSlipTOList;
+       const customerCode = selectedCustomer.value;
       //  const response = await axios.post("http://localhost:8282/hr/server/webclient/order", 
       //   {
       //       orderSlipTOList,
       //       customerCode
       //   });
 
-        // const response = await axios.post("http://localhost:8282/hr/server/kafka/order", 
-        // {
-        //     orderSlipTOList,
-        //     customerCode
-        // });
+        const response = await axios.post("http://localhost:8282/hr/server/rest/order", 
+        {
+            orderSlipTOList,
+            customerCode
+        });
 
 
        //console.log(data);  // Logs the entire array of objects
 
       // If you want to inspect each object individually
-      //  res.data.orderSlipTOList.forEach((item: any, index: number) => {
-      //     console.log(`Object ${index + 1}:`, item);
-      //  });
+       res.data.orderSlipTOList.forEach((item: any, index: number) => {
+          console.log(`Object ${index + 1}:`, item);
+       });
 
-      //  console.log("restTemplate결과: " + response.data.errorMsg);
+       console.log("restTemplate결과: " + response.data.errorMsg);
       infodata.value = purchaseStore().OrderAndInv;
 
        // VDataTable 갱신
@@ -169,7 +167,7 @@ const orderAndInvBtnClick = async () => {
        
      
        // 발주 성공 혹은 실패 alert 띄우기
-       alert("발주를 성공적으로 완료 하였습니다.");
+       alert(response.data.errorMsg);
 
       // 발주 후 데이터 모두 초기화
        initializeInfodata();
@@ -181,7 +179,6 @@ const orderAndInvBtnClick = async () => {
         
         } catch (error) {
         console.error('데이터 가져오기 에러:', error);
-        alert("발주를 실패하였습니다.");
         return [];
      }
 };

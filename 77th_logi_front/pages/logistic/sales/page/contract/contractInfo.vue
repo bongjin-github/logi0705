@@ -17,6 +17,8 @@ const infodataDetail=ref([]);
 const selectNum=ref('');
 const textFieldValue1=ref('');
 
+const selectContract =ref([])
+
 const headers = [
   { title: '수주일련번호',sortable: false, key: 'contractNo' , width:120},
   { title: '견적일련번호', key: 'estimateNo', width:150 },
@@ -107,16 +109,18 @@ const onSelected=({ selected, a }: OnSelectedParams)=>{
   customerData.value=a.internalItem.columns
 }
 
-const detailRow= async(item: any, row: any)=>{
-  console.log("row",row.internalItem.columns.contractNo)
-  try {
-    const contractNo=row.internalItem.columns.contractNo
-
+const selectRow= async(item:any, row:any)=>{
+  try{
+  selectContract.value = toRaw(row.item);
+  const contractNo = selectContract.value.contractNo
+  console.log('선택된 행' , selectContract.value)
+  console.log('선택된 행의 수주번호' , selectContract.value.contractNo)
+  
     //수주 상세 조회
     await salesStore().SEARCH_CONTRACT_DETAIL(contractNo)
     infodataDetail.value = salesStore().contractDetailInfo
 
-  } catch (error) {
+  }catch(error){
     console.error('Error fetching data:', error);
     return [];
   }
@@ -156,6 +160,39 @@ const cutomerDelete=async()=>{
   infodata.value = await fetchData();
 }
 
+//삭제
+const deleteData = async () => {
+  try {
+    if (!selectContract.value) {
+      console.log('삭제할selectContract', selectContract.value)
+      console.warn('삭제할 항목을 선택하세요.')
+      alert("삭제할 데이터를 선택해주세요!");
+
+      return
+    }
+
+    const userConfirmed = window.confirm('삭제하시겠습니까?')
+
+    if (userConfirmed) {
+      const contractNo = selectContract.value.contractNo
+
+      console.log('삭제할contractNo', contractNo)
+      console.log('타입????????',typeof contractNo)
+
+      await salesStore().DELETE_CONTRACT_URL(contractNo)
+      const res = salesStore().deleteContract
+
+      handleButtonClick()
+
+      alert('수주가 성공적으로 삭제되었습니다.')
+    }
+  }
+  catch (error) {
+    console.error('데이터 삭제 오류:', error)
+    alert('수주 삭제에 실패했습니다.')
+  }
+}
+
 </script>
 
 <template>
@@ -182,6 +219,13 @@ const cutomerDelete=async()=>{
     >
       검색
     </VBtn>
+    <VBtn
+      color="primary"
+      @click="deleteData"
+    >
+      삭제
+    </VBtn>
+
   </VCol>
     
     <!-- 두 번째 VRow -->
@@ -226,7 +270,7 @@ clearable
     :items-per-page="10"
     height="400"
     fixed-header
-    @click:row="detailRow"
+    @click:row="selectRow"
   >
   </VDataTable>
 </Vcard>

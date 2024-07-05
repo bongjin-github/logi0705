@@ -49,7 +49,6 @@ const Add = async () => {
     requestPerson: requestPerson.value,
     requestQuantity: requestQuantity.value,
     inspection: inspection.value,
-    unitOfStock:"EA"
   }
 
   console.log('addData', addData)

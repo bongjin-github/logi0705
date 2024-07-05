@@ -2,6 +2,7 @@
 import { VDataTable } from "vuetify/labs/VDataTable";
 import MrpGatherResultModal from "./MrpGatherResultModal.vue";
 import axios from "axios";
+import { productionStore } from "@/store/logi/production";
 
 const item = ref([]);
 const mpsNoList = ref([]);
@@ -18,11 +19,14 @@ const headers = ref([
 ]);
 
 const getMrpGatherList = async () => {
-  const url =
-    "http://localhost:8282/logi/logistics/production/mrpGathering/getMrpList";
-  const params = { mrpGatheringStatusCondition: "" };
+  const mrpGatheringStatusCondition = ''
+  // const url =
+  //   "http://localhost:8282/logi/logistics/production/mrpGathering/getMrpList";
+  // const params = { mrpGatheringStatusCondition: "" };
 
-  const res = await axios.get(url, { params: params });
+  // const res = await axios.get(url, { params: params });
+  await productionStore().GET_MRP_LIST_URL(mrpGatheringStatusCondition)
+  const res = productionStore().getMrpListData
 
   console.log(res.data.gridRowJson);
   const data = res.data.gridRowJson;

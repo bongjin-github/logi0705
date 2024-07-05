@@ -15,6 +15,8 @@ const SEARCH_ORDER_LIST_ONDLVRY_URL = "/purchase/searchOrderInfoListOnDelivery";
 const ORDERLIST_INSPECTION_URL = "/purchase/inspection";
 const ORDERLIST_WAREHOUSING_URL = "/purchase/warehousing";
 const SEARCH_STOCK_LOG_LIST_URL = "/purchase/searchStockLogList";
+//창고 상세조회 78th추가 6/27
+const WAREHOUSE_STOCK_LIST_URL = '/purchase/warehouseStockList'
 
 //BOM 조회
 function getSearchBomDeploy(deployCondition: string, itemClassificationCondition: string, itemCode: string ) {
@@ -128,4 +130,29 @@ function getSearchStockLogList( startDate: any, endDate: any ) {
   });
 }
 
-export{ getSearchBomDeploy, getSearchBomInfo, addBatchBomListProcess, deleteBomdataBatch, getSearchOrderList, getShowOrderDialog, getOrderAndInv, getOptionOrder, getShowOrderInfo, getSearchStockList, getOrderListOnDlvry, putOrderListInspection, getOrderListWarehousing, getSearchStockLogList }
+//창고 상세 조회 78th 추가 6/27
+function getWarehouseStockList(warehouseCode: string) {
+  return logiApi.get(`${WAREHOUSE_STOCK_LIST_URL}`, {
+    params: {
+      warehouseCode
+    },
+  });
+}
+
+export {
+  getSearchBomDeploy,
+  getSearchBomInfo,
+  addBatchBomListProcess,
+  deleteBomdataBatch,
+  getSearchOrderList,
+  getShowOrderDialog,
+  getOrderAndInv,
+  getOptionOrder,
+  getShowOrderInfo,
+  getSearchStockList,
+  getOrderListOnDlvry,
+  putOrderListInspection,
+  getOrderListWarehousing,
+  getSearchStockLogList,
+  getWarehouseStockList,
+}

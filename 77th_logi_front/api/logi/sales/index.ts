@@ -13,6 +13,20 @@ const SEARCH_SALES_PLAN_BY_DATE = '/sales/searchSalesPlanByDate'
 
 const SEARCH_DELIVERABLE_CONTRACT_LIST_URL = '/sales/searchDeliverableContractList'
 const ADD_DELIVERY_URL = '/sales/delivery'
+//견적조회 6/27
+const SEARCH_ESTIMATES_LIST_URL = '/sales/searchEstimates'
+//견적삭제 6/27
+const DELETE_ESTIMATE_URL = '/sales/deleteEstimate'
+//견적수정 6/27
+const PUT_MODIFY_ESTIMATE_URL = '/sales/updateEstimates'
+//판매계획 추가 6/27
+const ADD_SALESPLAN_URL = '/sales/jpasalesplansave'
+//판매계획 수정 6/27
+const UPDATE_SALESPLAN_URL = '/sales/jpaupdatesalesplan'
+//수주삭제 6/27
+const DELETE_CONTRACT_URL = '/sales/deleteContract'
+//판매계획 삭제 6/27
+const DELETE_SALESPLAN_URL = '/sales/deletesalesplan'
 
 // 제품 단가 조회
 function getUnitPriceOfEstimate(itemCode: string) {
@@ -106,6 +120,65 @@ function addDelivery(contractDetailNo: object) {
   return logiApi.post(`${ADD_DELIVERY_URL}`, contractDetailNo)
 }
 
+//견적조회 6/27
+function getSearchEstimatesList(startDate: string, endDate: string, selectedItem: any) {
+  return logiApi.get(`${SEARCH_ESTIMATES_LIST_URL}`, {
+    params: {
+      startDate: startDate,
+      endDate: endDate,
+      dateSearchCondition: selectedItem,
+    },
+  });
+}
+
+// 견적 삭제 6/27
+function deleteEstimate(estimateNo: string) {
+  return logiApi.delete(`${DELETE_ESTIMATE_URL}`, {
+    params: {
+      estimateNo,
+    },
+  })
+}
+
+// 견적 수정 6/27
+function putModifyEstimate(estimateTO: object) {
+  return logiApi.put(`${PUT_MODIFY_ESTIMATE_URL}`, estimateTO);
+}
+
+// 판매계획 추가 6/27
+function addSalesPlan(addData: object) {
+  console.log("addSalesPlan: ", addData);
+  return logiApi.post(`${ADD_SALESPLAN_URL}`, addData)
+}
+
+// 판매계획 수정 6/27
+function updateSalesPlan(updateData: object) {
+  console.log("updateSalesPlan: ", updateData);
+  return logiApi.post(`${UPDATE_SALESPLAN_URL}`, updateData)
+}
+
+// 수주 삭제
+function deleteContract(contractNo: string) {
+  console.log('api에서의 contractNo : ' , contractNo)
+  return logiApi.delete(`${DELETE_CONTRACT_URL}`, {
+    params: {
+      contractNo,
+    },
+  })
+}
+
+// 판매계획 삭제 6/27
+function deleteSalesPlan(salesPlanNo: string) {
+  console.log('api에서 판매계획번호', salesPlanNo)
+  return logiApi.delete(`${DELETE_SALESPLAN_URL}`, {
+    params: {
+      salesPlanNo,
+    },
+  })
+}
+
+
+
 export {
   getUnitPriceOfEstimate,
   addNewEstimates,
@@ -117,7 +190,14 @@ export {
   getSalesPlan,
   getDeliverableContractList,
   addDelivery,
-  getSalesPlanByDate
+  getSalesPlanByDate,
+  getSearchEstimatesList,
+  deleteEstimate,
+  putModifyEstimate,
+  addSalesPlan,
+  updateSalesPlan,
+  deleteContract,
+  deleteSalesPlan,
 }
 
 

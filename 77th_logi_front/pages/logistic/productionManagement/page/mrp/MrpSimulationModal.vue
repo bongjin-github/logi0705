@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { VDataTable } from "vuetify/labs/VDataTable";
 import axios from "axios";
+import { productionStore } from "@/store/logi/production";
 
 const { contract, salesPlan } = defineProps(["contract", "salesPlan"]);
 const emit = defineEmits(["get-mps-data"]);
@@ -28,17 +29,19 @@ const headers = ref([
 
 // 부모 컴포넌트로부터 provide되어 들어온 데이러를 inject로 받아서 사용
 
-const searchMrpList = async (mpsNo: any) => {
+const searchMrpList = async (mpsNo) => {
   console.log("data is : ", data);
   console.log("mpsNo is : ", mpsNo);
-  const url = "http://localhost:8282/logi/logistics/production/openMrp";
-  const params = {
-    mpsNo: mpsNo,
-  };
+  // const url = "http://localhost:8282/logi/logistics/production/openMrp";
+  // const params = {
+  //   mpsNo: mpsNo,
+  // };
 
-  const response = await axios.get(url, {
-    params: params,
-  });
+  // const response = await axios.get(url, {
+  //   params: params,
+  // });
+  await productionStore().OPEN_MRP_URL(mpsNo)
+  const response = productionStore().openMrpData
 
   console.log(response.data.result);
   item.value = response.data.result;
@@ -85,11 +88,13 @@ const saveMrp = async () => {
   const toRawedData = toRaw(item.value);
   console.log(toRawedData, selectedDate.value);
 
-  const url = "http://localhost:8282/logi/logistics/production/registerMrp";
+  // const url = "http://localhost:8282/logi/logistics/production/registerMrp";
   const body = { mrpRegisterDate: selectedDate.value, batchList: toRawedData };
-  const response = await axios
-    .put(url, body)
-    .catch((err) => console.log("err is : ", err));
+  // const response = await axios
+  //   .put(url, body)
+  //   .catch((err) => console.log("err is : ", err));
+  await productionStore().REGISTER_MRP_URL(body)
+  const response = productionStore().registerMrpData
   console.log("response is : ", response);
   isDialogVisible.value = false;
   // mrp 등록후 부모 컴포넌트에 있는 getData() 함수를 호출

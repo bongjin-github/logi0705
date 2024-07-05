@@ -48,12 +48,14 @@ const headers = [
 const fetchData = async () => {
   try {
     //판매계획 조회
-    const response = await axios.get(
-      "http://localhost:8282/logi/sales/jpasalesplan"
-    );
+    // const response = await axios.get(
+    //   "http://localhost:8282/logi/sales/jpasalesplan"
+    // );
+    await salesStore().SEARCH_SALES_PLAN()
+    const response = salesStore().salesPlanInfo
     
-    console.log("salesPlan", response.data);
-    return response.data;
+    console.log("salesPlan조회", response);
+    return response;
   } catch (error) {
     console.error("Error fetching data:", error);
     return [];
@@ -75,7 +77,7 @@ const fetchaddData = async () => {
       mpsApplyStatus.value ||
       description.value
     ) {
-      const adddata = {
+      const addData = {
         itemCode: selectedCode.value,
         itemName: selectedName.value,
         unitOfSales: unitOfSales.value,
@@ -88,10 +90,13 @@ const fetchaddData = async () => {
         description: description.value,
       };
 
-      const response = await axios.post(
-        "http://localhost:8282/logi/sales/jpasalesplansave",
-        adddata
-      );
+      // const response = await axios.post(
+      //   "http://localhost:8282/logi/sales/jpasalesplansave",
+      //   addData
+      // );
+
+      await salesStore().ADD_SALESPLAN_URL(addData)
+      const response = salesStore().addSalesPlanData
 
       if (response.status === 200) {
         alert("추가 완료되었습니다!");
@@ -110,7 +115,7 @@ const fetchaddData = async () => {
 
 const fetchupdateData = async () => {
   try {
-    const updatedata = {
+    const updateData = {
       salesPlanNo: salesPlanNo.value,
       itemCode: selectedCode.value,
       itemName: selectedName.value,
@@ -123,10 +128,13 @@ const fetchupdateData = async () => {
       mpsApplyStatus: mpsApplyStatus.value,
       description: description.value,
     };
-    const response = await axios.post(
-      "http://localhost:8282/logi/sales/jpaupdatesalesplan", updatedata
-    );
-    console.log("updatesalesplan", response.data);
+    // const response = await axios.post(
+    //   "http://localhost:8282/logi/sales/jpaupdatesalesplan", updateData
+    // );
+    await salesStore().UPDATE_SALESPLAN_URL(updateData)
+    const response = salesStore().updateSalesPlanData
+
+    console.log("updatesalesplan", response);
     // 데이터 추가가 성공하면 알림 창을 띄우고 다이얼로그를 닫음
     if (response.status === 200) {
       alert("수정 완료되었습니다!");
@@ -150,13 +158,16 @@ const fetchadeleteData = async () => {
       return;
     }
     
-    const response = await axios.delete(
-      "http://localhost:8282/logi/sales/deletesalesplan",
-      {
-        params: { SalesPlanNo: selectData.value.salesPlanNo },
-      }
-    );
-    console.log("deletesalesplan", response.data);
+    // const response = await axios.delete(
+    //   "http://localhost:8282/logi/sales/deletesalesplan",
+    //   {
+    //     params: { SalesPlanNo: selectData.value.salesPlanNo },
+    //   }
+    // );
+
+    await salesStore().DELETE_SALESPLAN_URL(selectData.value.salesPlanNo)
+    const response = salesStore().deleteSalesPlanData
+    console.log("deletesalesplan", response);
 
     // 삭제가 성공하면 알림 창을 띄우고 데이터를 다시 불러옴
     if (response.status === 200) {
@@ -212,6 +223,7 @@ const selectRow = (item: any, row: any) => {
   selectData.value = row?.internalItem?.columns;
   console.log("selectData", toRaw(selectData.value))
   salesPlanNo.value = toRaw(selectData.value).salesPlanNo;
+  console.log('선택된 판매계획번호', salesPlanNo.value)
 
   // 행을 선택할 때마다 데이터를 업데이트합니다.
   updateDialogData();

@@ -4,6 +4,7 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
 import axios from 'axios';
 import NewwarehouseModal from './WarehouseModal.vue'
 import { baseStore } from '@/store/logi/base';
+import { purchaseStore } from '@/store/logi/purchase';
 
 
 const wareInfo=ref([]);
@@ -51,8 +52,10 @@ const insertWare=async({warehouseCode,warehouseName,warehouseUseOrNot,descriptio
         description:description,status:"INSERT",warehouseCode:"",warehouseName:warehouseName,warehouseUseOrNot:warehouseUseOrNot
     }
     console.log("batchList",batchList)
+    console.log('batchList 타입?' , typeof batchList)
     try {
-    const response = await axios.post('http://localhost:8282/logi/base/warehousebatchListProcess',[batchList]);
+    await baseStore().ADD_WAREHOUSE_LIST([batchList])
+    const response = baseStore().addWarehouse
         console.log("response",response.data)
         alert("등록완료.");
         wareInfoSearch();
@@ -88,11 +91,9 @@ console.log('Selected Row:', selectedRow);
 console.log('deleteList:', deleteList);
 
 
-    try {
-      const response = await axios.post(
-        'http://localhost:8282/logi/base/warehousebatchListProcess', deleteList 
-      );
-
+ try {
+      await baseStore().DELETE_WAREHOUSE_LIST(deleteList)
+    const response = baseStore().deleteWarehouse
       console.log("getcompanyInfo", response.data);
       alert("삭제완료.");
       wareInfoSearch();
@@ -125,10 +126,10 @@ const wareInfoDetailSearch=async()=>{
   console.log("select",selectRow._rawValue)
   const warehouseCode = selectRow._rawValue[0].replace(/\[|\]/g, '');
     try {
-    const response = await axios.get('http://localhost:8282/logi/purchase/warehouseStockList',{
-        params:{warehouseCode}});
-        console.log("response",response.data)
-        wareInfodetail.value=response.data.gridRowJson
+    await purchaseStore().WAREHOUSE_STOCK_LIST_URL(warehouseCode)
+    const response = purchaseStore().WarehouseStockListInfo
+        console.log("창고 상세 조회 response",response)
+        wareInfodetail.value=response
         // selectRow.value=row.item
   } catch (error) {
     console.error('Error fetching data:', error);

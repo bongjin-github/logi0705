@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { productionStore } from "@/store/logi/production";
 import axios from "axios";
 import { VDataTable } from "vuetify/labs/VDataTable";
 const startDate = ref("");
@@ -36,20 +37,24 @@ const getData = async () => {
   if (!isValid()) return;
   console.log(startDate.value, endDate.value, selectedOption.value);
 
-  const url =
-    "http://localhost:8282/logi/logistics/production/mrpGathering/searchMrpGathering";
-  const data = {
-    params: {
-      startDate: startDate.value,
-      endDate: endDate.value,
-      searchDateCondition: selectedOption.value,
-    },
-  };
+  // const url =
+  //   "http://localhost:8282/logi/logistics/production/mrpGathering/searchMrpGathering";
+  // const data = {
+  //   params: {
+  //     startDate: startDate.value,
+  //     endDate: endDate.value,
+  //     searchDateCondition: selectedOption.value,
+  //   },
+  // };
 
-  const response = await axios
-    .get(url, data)
-    .catch((err) => console.log("error occured at getData() err is :", err));
-  console.log(response.data);
+  // const response = await axios
+  //   .get(url, data)
+  //   .catch((err) => console.log("error occured at getData() err is :", err));
+  // console.log(response.data);
+
+  await productionStore().SEARCH_MRP_GATHERING_URL(startDate.value, endDate.value, selectedOption.value)
+  const response = productionStore().searchMrpGatheringData
+  console.log('MrpInfo페이지 response', response)
   item.value = response.data;
 };
 </script>

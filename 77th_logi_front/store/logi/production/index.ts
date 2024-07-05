@@ -13,7 +13,14 @@ import {
   postContractToMps,
   getProductionProcessList,
   getWorkplaceList,
-  postSalesPlanToMps
+  postSalesPlanToMps,
+  searchMpsInfo,
+  searchMrpGathering,
+  getMrpList,
+  updateMps,
+  openMrp,
+  registerMrp,
+  getMrpGatheringList,
 } from "@/api/logi/production/index";
 import type { SalesPlanTO } from "@/types/logistic/sales/sales";
 
@@ -31,7 +38,14 @@ export const productionStore = defineStore("productionStore", {
     SearchContractAvailable: [] as any, //MPS 등록가능한 수주 조회
     contractToMps : [] as any, // 수주 -> MPS등록
     productionProcessList: [] as any, //작업지시 모의전개 모달창에서 작업장 조회
-    workplaceList : [] as any, // //작업지시 모의전개 모달창에서 지점 조회
+    workplaceList: [] as any, // //작업지시 모의전개 모달창에서 지점 조회
+    searchMpsInfoData: [] as any, //소요량전개 페이지에서 수주 조회
+    searchMrpGatheringData: [] as any, //소요량취합 결과 조회 페이지에서 소요량 취합 결과 조회 6/28
+    getMrpListData: [] as any, //소요량전개 페이지에서 품목별 조달계획 탭 안에서 조달구분 6/28
+    updateMpsData: [] as any, //소요량전개 페이지에서 MPS수정 6/28
+    openMrpData: [] as any, //소요량전개 페이지에서 MRP 모의전개 6/28
+    registerMrpData: [] as any, //소요량전개 페이지에서 MRP모의전개 모달창에서 등록하는 페이지 6/28
+    getMrpGatheringListData: [] as any, //소요량전개 페이지에서 품목별 조달계획 탭 안에서 조달구분에서 소요량 취합 실행 6/28
 
   }),
   actions: {
@@ -216,6 +230,99 @@ export const productionStore = defineStore("productionStore", {
       }
       catch (error) {
         console.error('Error fetching data:', error)
+      }
+    },
+        
+    //소요량전개 페이지에서 수주 조회
+    async SEARCH_MPS_INFO_URL(startDate : string, endDate : string, classification : string) {
+      try {
+        const response = await searchMpsInfo(startDate, endDate, classification);
+        console.log('스토어에서 response', response)
+        this.searchMpsInfoData = response
+        
+      } catch (error: any) {
+        console.error(error);
+      }
+    },
+
+    //소요량취합 결과 조회 페이지에서 소요량 취합 결과 조회 6/28
+    async SEARCH_MRP_GATHERING_URL(startDate : string, endDate : string, searchDateCondition : string) {
+      try {
+        const response = await searchMrpGathering(startDate, endDate, searchDateCondition);
+        console.log('스토어에서 response', response)
+        this.searchMrpGatheringData = response
+        
+      } catch (error: any) {
+        console.error(error);
+      }
+    },
+
+    //소요량전개 페이지에서 품목별 조달계획 탭 안에서 조달구분 6/28
+    async GET_MRP_LIST_URL(mrpGatheringStatusCondition : string) {
+      try {
+        const response = await getMrpList(mrpGatheringStatusCondition);
+        console.log('스토어에서 response', response)
+        this.getMrpListData = response
+        
+      } catch (error: any) {
+        console.error(error);
+      }
+    },
+
+    //소요량전개 페이지에서 MPS수정 6/28
+    async UPDATE_MPS_URL(modifiedData : any) {
+      console.log('스토어에 옴');
+      console.log('mpsData store, mpsData, ', modifiedData);
+
+      try {
+        const response = await updateMps(modifiedData);
+        this.updateMpsData = response
+        console.log(this.contractToMps, "productionStore.updateMps")
+        
+      } catch (error: any) {
+        console.error(error);
+      }
+    },
+
+        //소요량전개 페이지에서 MRP 모의전개 6/28
+    async OPEN_MRP_URL(mpsNo : string) {
+      try {
+        const response = await openMrp(mpsNo);
+        console.log('스토어에서 response', response)
+        this.openMrpData = response
+        
+      } catch (error: any) {
+        console.error(error);
+      }
+    },
+
+    //소요량전개 페이지에서 MRP모의전개 모달창에서 등록하는 페이지 6/28
+    async REGISTER_MRP_URL(body : any) {
+      console.log('스토어에 옴');
+      console.log('mpsData store, body, ', body);
+
+      try {
+        const response = await registerMrp(body);
+        this.registerMrpData = response
+        console.log(this.contractToMps, "productionStore.registerMrp")
+        
+      } catch (error: any) {
+        console.error(error);
+      }
+    },
+
+    //소요량전개 페이지에서 품목별 조달계획 탭 안에서 조달구분에서 소요량 취합 실행 6/28
+    //얘는 만들어놨는데 적용 못시켰다..
+    async GET_MRP_GATHERING_URL(params: any) {
+      console.log('스토어에 옴~~', params)
+      console.log('스토어에서 params 타입???', typeof params)
+      try {
+        const response = await getMrpGatheringList(params);
+        console.log('스토어에서 response', response)
+        this.getMrpGatheringListData = response
+        
+      } catch (error: any) {
+        console.error(error);
       }
     },
 

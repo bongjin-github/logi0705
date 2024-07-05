@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { productionStore } from "@/store/logi/production";
 import axios from "axios";
 const isDialogVisible = ref(false);
 const selectedRadio = ref("");
@@ -63,17 +64,17 @@ watch(mpsPlanAmount, () => {
   console.log("modifiedData is : ", toRaw(modifiedData));
 });
 
-const saveModifiedMps = async (url, obj) => {
-  console.log(url, obj);
-  const response = await axios.post(url, obj);
+// const saveModifiedMps = async (url, obj) => {
+//   console.log(url, obj);
+//   const response = await axios.post(url, obj);
 
-  console.log(response);
-  // mps정보가 수정되고 나면은 부모 컴포넌트에서
-  // mps데이터를 가지고 오는 로직을 실행 시킨다.
-  emit("get-mps-data");
-};
+//   console.log(response);
+//   // mps정보가 수정되고 나면은 부모 컴포넌트에서
+//   // mps데이터를 가지고 오는 로직을 실행 시킨다.
+//   emit("get-mps-data");
+// };
 
-const saveMrp = () => {
+const saveMrp = async() => {
   // toRaw()는 프록시에 있는 데이터를 
   // 가독성이 높은 객체 형태로 변환
   // 해주는 메서드이다. 
@@ -81,10 +82,13 @@ const saveMrp = () => {
   const tab = selectedRadio.value;
   if (tab === "contract") {
     console.log("this is contract tab");
-    const url = "http://localhost:8282/logi/logistics/production/updateMps";
-    const obj = data;
+    // const url = "http://localhost:8282/logi/logistics/production/updateMps";
+    // const obj = data;
+    await productionStore().UPDATE_MPS_URL(modifiedData)
+    const response = productionStore().updateMpsData
+    console.log('MPS수정 ???', response)
 
-    saveModifiedMps(url, obj);
+    emit("get-mps-data");
     isDialogVisible.value = false;
 
     // 판매계획 서비스는 아직 구현되지 않았음

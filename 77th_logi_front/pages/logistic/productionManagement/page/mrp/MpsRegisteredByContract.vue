@@ -3,6 +3,7 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 import MrpSimulationModal from "./MrpSimulationModal.vue";
 import MpsModifyModal from "./MpsModifyModal.vue";
 import axios from "axios";
+import { productionStore } from "@/store/logi/production";
 
 //for test commit
 
@@ -34,16 +35,20 @@ const getMpsData = async () => {
     alert("시작일 혹은 종료일을 선택해 주세요.");
     return;
   }
+  const classification = '수주'
+  console.log(startDate.value, endDate.value, classification);
+  
+  // const url = "http://localhost:8282/logi/logistics/production/searchMpsInfo";
+  // const params = { startDate: startDate.value, endDate: endDate.value, classification: "수주" };
 
-  console.log(startDate.value, endDate.value);
-  const url = "http://localhost:8282/logi/logistics/production/searchMpsInfo";
-  const params = { startDate: startDate.value, endDate: endDate.value, classification: "수주" };
-
-  const response = await axios
-    .get(url, {
-      params: params,
-    })
-    .catch((err) => console.log("err at getMpsData() is :", err));
+  // const response = await axios
+  //   .get(url, {
+  //     params: params,
+  //   })
+  //   .catch((err) => console.log("err at getMpsData() is :", err));
+  await productionStore().SEARCH_MPS_INFO_URL(startDate.value, endDate.value, classification)
+  const response = productionStore().searchMpsInfoData
+  console.log('조회가 될까?', response)
   item.value = response.data.result;
 
   // 응답을 받고 나서selectedItem ref를 초기화
